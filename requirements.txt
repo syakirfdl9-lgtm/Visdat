@@ -1,6 +1,5 @@
 streamlit
 pandas
-sqlalchemy
+SQLAlchemy
 psycopg2-binary
-matplotlib
-seaborn
+plotly
