@@ -25,15 +25,19 @@ df_gabungan['jumlah_balita'] = pd.to_numeric(df_gabungan['jumlah_balita'], error
 st.sidebar.header("Filter Data")
 opsi_tahun = ["Semua"] + list(sorted(df_gabungan['tahun'].unique()))
 opsi_status = ["Semua"] + list(df_gabungan['keterangan'].unique())
+opsi_kecamatan = ["Semua"] + list(sorted(df_gabungan['bps_nama_kecamatan'].dropna().unique()))
 
 tahun_pilihan = st.sidebar.selectbox("Pilih Tahun:", options=opsi_tahun)
 status_pilihan = st.sidebar.selectbox("Pilih Status Gizi:", options=opsi_status)
+kecamatan_pilihan = st.sidebar.selectbox("Pilih Kecamatan:", options=opsi_kecamatan)
 
 df_filter = df_gabungan.copy()
 if tahun_pilihan != "Semua":
     df_filter = df_filter[df_filter['tahun'] == tahun_pilihan]
 if status_pilihan != "Semua":
     df_filter = df_filter[df_filter['keterangan'] == status_pilihan]
+if kecamatan_pilihan != "Semua":
+    df_filter = df_filter[df_filter['bps_nama_kecamatan'] == kecamatan_pilihan]
 
 # Menampilkan Kembali Tabel yang Sempat Hilang
 st.subheader("Data Terfilter")
