@@ -6,12 +6,11 @@ file_path = 'jumlah_balita_berdasarkan_status_gizi_dengan_indikato.xlsx'
 df = pd.read_excel(file_path)
 
 # 2. Transformasi: Pisahkan menjadi dua tabel menggunakan nama kolom asli
-# Tabel Master (Untuk Supabase) - Menghilangkan data duplikat
-df_master = df[['bps_kode_kabupaten_kota', 'bps_nama_kabupaten_kota']].drop_duplicates()
+# Tabel Master (Untuk Supabase) - Menjadikan Kecamatan sebagai master
+df_master = df[['bps_kode_kecamatan', 'bps_nama_kecamatan']].drop_duplicates()
 
-# Tabel Metrik (Untuk SQLite) - 'keterangan' mewakili status gizi
-df_metrik = df[['bps_kode_kabupaten_kota', 'keterangan', 'jumlah_balita', 'satuan', 'tahun']]
-
+# Tabel Metrik (Untuk SQLite) - Relasi diubah ke kode kecamatan
+df_metrik = df[['bps_kode_kecamatan', 'keterangan', 'jumlah_balita', 'satuan', 'tahun']]
 print("Data berhasil dipisahkan. Memulai proses unggah ke database...")
 
 # 3. Load 1: Masukkan data Metrik ke SQLite (Lokal)
