@@ -18,7 +18,7 @@ df_metrik = pd.read_sql("SELECT * FROM metrik_gizi", sqlite_engine)
 df_master = pd.read_sql("SELECT * FROM master_wilayah", supabase_engine)
 
 # 3. Integrasi Data (Merge) & Perbaikan Tipe Data Angka
-df_gabungan = pd.merge(df_metrik, df_master, on='bps_kode_kabupaten_kota', how='left')
+df_gabungan = pd.merge(df_metrik, df_master, on='bps_kode_kecamatan', how='left')
 df_gabungan['jumlah_balita'] = pd.to_numeric(df_gabungan['jumlah_balita'], errors='coerce').fillna(0)
 
 # 4. Slicer / Filter Interaktif di Sidebar (Dropdown)
