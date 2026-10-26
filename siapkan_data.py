@@ -9,8 +9,8 @@ df = pd.read_excel(file_path)
 # Tabel Master (Untuk Supabase) - Menjadikan Kecamatan sebagai master
 df_master = df[['bps_kode_kecamatan', 'bps_nama_kecamatan']].drop_duplicates()
 
-# Tabel Metrik (Untuk SQLite) - Relasi diubah ke kode kecamatan
-df_metrik = df[['bps_kode_kecamatan', 'keterangan', 'jumlah_balita', 'satuan', 'tahun']]
+# Tabel Metrik (Untuk SQLite)
+df_metrik = df[['bps_kode_kecamatan', 'bps_nama_kecamatan', 'upt_puskesmas', 'keterangan', 'jumlah_balita', 'satuan', 'tahun']]
 print("Data berhasil dipisahkan. Memulai proses unggah ke database...")
 
 # 3. Load 1: Masukkan data Metrik ke SQLite (Lokal)
