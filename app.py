@@ -49,10 +49,6 @@ kolom_lain = [col for col in df_filter.columns if col != 'keterangan']
 df_display = df_filter[kolom_lain + ['keterangan']]
 st.dataframe(df_display, use_container_width=True, height=350)
 
-# Menampilkan Kembali Tabel yang Sempat Hilang
-st.subheader("Data Terfilter")
-st.dataframe(df_filter, use_container_width=True, height=350)
-
 # 5. Visualisasi Grafik (Plotly Interaktif - Tema Hijau)
 col1, col2 = st.columns(2)
 
