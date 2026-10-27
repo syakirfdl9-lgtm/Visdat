@@ -11,7 +11,12 @@ st.write("Aplikasi ini mengintegrasikan data master dari Supabase (PostgreSQL) d
 
 # 1. Koneksi ke Multi-DBMS
 sqlite_engine = create_engine('sqlite:///database_sqlite.db')
-supabase_engine = create_engine(st.secrets["SUPABASE_URL"]) 
+
+@st.cache_resource
+def init_supabase():
+    return create_engine(st.secrets["SUPABASE_URL"])
+
+supabase_engine = init_supabase()
 
 # 2. Tarik Data
 df_metrik = pd.read_sql("SELECT * FROM metrik_gizi", sqlite_engine)
