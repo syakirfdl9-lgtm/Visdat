@@ -3,6 +3,9 @@ import pandas as pd
 from sqlalchemy import create_engine
 import plotly.express as px
 
+# REFERENSI TATA LETAK UI:
+# Fitur "Ringkasan Eksekutif" (KPI Metrics) diadaptasi dari: https://github.com/dataprofessor/dashboard-kit
+
 # Mengatur tampilan halaman
 st.set_page_config(page_title="Dashboard Gizi Balita Jabar", layout="wide")
 
@@ -49,6 +52,20 @@ if kecamatan_pilihan != "Semua":
     df_filter = df_filter[df_filter['bps_nama_kecamatan'] == kecamatan_pilihan]
 if puskesmas_pilihan != "Semua":
     df_filter = df_filter[df_filter['upt_puskesmas'] == puskesmas_pilihan]
+
+# --- FITUR TAMBAHAN: RINGKASAN EKSEKUTIF (KPI METRICS) ---
+st.markdown("### Ringkasan Eksekutif")
+kpi1, kpi2, kpi3 = st.columns(3)
+
+total_balita = int(df_filter['jumlah_balita'].sum())
+total_puskesmas = df_filter['upt_puskesmas'].nunique()
+rata_rata_per_puskesmas = round(total_balita / total_puskesmas, 0) if total_puskesmas > 0 else 0
+
+kpi1.metric(label="Total Balita (Terfilter)", value=f"{total_balita:,.0f} Jiwa")
+kpi2.metric(label="UPT Puskesmas Terlibat", value=f"{total_puskesmas} Unit")
+kpi3.metric(label="Rata-rata per Puskesmas", value=f"{rata_rata_per_puskesmas:,.0f} Jiwa")
+st.markdown("---")
+# ---------------------------------------------------------
 
 # Menampilkan Kembali Tabel (Keterangan di Paling Kanan)
 st.subheader("Data Terfilter")
