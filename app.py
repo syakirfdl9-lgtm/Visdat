@@ -8,6 +8,8 @@ st.set_page_config(page_title="Dashboard Gizi Balita Jabar", layout="wide")
 
 st.title("Visualisasi Status Gizi Balita Kota Bandung")
 st.write("Aplikasi ini mengintegrasikan data master dari Supabase (PostgreSQL) dan data metrik dari SQLite.")
+st.write("Dataset ini berisi data jumlah balita berdasarkan status gizi dengan indikator tinggi badan menurut umur di Puskesmas Kota Bandung dari tahun 2020 s.d. 2025.")
+st.write("Dataset terkait topik Kesehatan ini dihasilkan oleh Dinas Kesehatan yang dikeluarkan dalam periode 1 tahun sekali.")
 
 # 1. Koneksi ke Multi-DBMS
 sqlite_engine = create_engine('sqlite:///database_sqlite.db')
