@@ -1,36 +1,52 @@
 # Dashboard Interaktif Status Gizi Balita (Multi-DBMS Data Pipeline)
 
-## Deskripsi Proyek
-Proyek ini merupakan implementasi perancangan arsitektur data (*data pipeline*) dan visualisasi informasi interaktif berbasis web. Dibangun menggunakan ekosistem Python, aplikasi ini mengintegrasikan data dari dua Sistem Manajemen Basis Data (DBMS) yang berbeda untuk menyajikan analisis status gizi balita di tingkat kecamatan dan puskesmas secara dinamis.
+**Oleh:** Syakir Fadhillah (NIM: [Isi NIM Anda di sini])  
+**Mata Kuliah:** Visualisasi Data dan Informasi (Informatika)
 
-## Ringkasan Arsitektur (Multi-DBMS)
-Proyek ini memisahkan antara data dimensi (master) dan data fakta (metrik) untuk mensimulasikan praktik manajemen basis data yang terstruktur:
-1. **DBMS 1: Supabase (PostgreSQL Cloud)** 
-   * **Fungsi:** Menyimpan entitas data master wilayah.
-   * **Struktur:** Tabel `master_wilayah` yang berisi `bps_kode_kecamatan` (Primary Key) dan `bps_nama_kecamatan`.
-   * **Engine:** PostgreSQL yang diakses melalui koneksi jaringan *Connection Pooler* IPv4.
-2. **DBMS 2: SQLite (Local Embedded Database)**
-   * **Fungsi:** Menyimpan log fakta analitik dan metrik operasional kesehatan.
-   * **Struktur:** Tabel `metrik_gizi` yang mencatat detail `upt_puskesmas`, `keterangan` (status gizi), `jumlah_balita`, dan `tahun`. Terhubung ke data master melalui *foreign key* `bps_kode_kecamatan`.
+---
 
-## Alur Integrasi (Data Pipeline)
+## 1. Deskripsi Proyek & Skenario Studi Kasus
+Proyek ini merupakan implementasi perancangan arsitektur data (*data pipeline*) dan visualisasi informasi interaktif berbasis web menggunakan ekosistem Python. 
+
+**Skenario Pemisahan Arsitektur:**
+Pemilihan arsitektur Multi-DBMS pada kasus pemantauan gizi balita ini didasarkan pada karakteristik data:
+* **Data Master Wilayah (Supabase/PostgreSQL):** Data hierarki geografis (Kecamatan) bersifat statis dan digunakan secara lintas sektoral oleh berbagai dinas. Oleh karena itu, data ini disimpan di *cloud* relasional agar menjadi *Single Source of Truth* yang terpusat.
+* **Data Metrik Kesehatan (SQLite):** Data jumlah balita, status gizi, dan puskesmas merupakan log operasional tahunan yang terus bertambah secara dinamis. Data ini disimulasikan tersimpan dalam *local embedded database* yang lebih cepat diakses untuk kebutuhan analitik dasbor lokal.
+
+## 2. Ringkasan Arsitektur (Multi-DBMS)
+Proyek ini memisahkan antara data dimensi (master) dan data fakta (metrik):
+* **DBMS 1: Supabase (PostgreSQL Cloud)** 
+  * **Fungsi:** Menyimpan entitas data master wilayah.
+  * **Struktur:** Tabel `master_wilayah` yang berisi `bps_kode_kecamatan` (Primary Key) dan `bps_nama_kecamatan`.
+* **DBMS 2: SQLite (Local Embedded Database)**
+  * **Fungsi:** Menyimpan log fakta analitik dan metrik operasional kesehatan.
+  * **Struktur:** Tabel `metrik_gizi` yang mencatat detail `upt_puskesmas`, `keterangan` (status gizi), `jumlah_balita`, dan `tahun`. Terhubung ke data master melalui kunci `bps_kode_kecamatan`.
+
+## 3. Alur Integrasi (Data Pipeline)
 Integrasi data (*data federation*) dilakukan di tingkat aplikasi (*application level*). 
-1. Skrip `siapkan_data.py` mengekstrak data dari *dataset* mentah (Excel), mentransformasikannya, lalu memuatnya (*Load*) ke Supabase dan SQLite secara terpisah.
-2. Saat aplikasi web (`app.py`) dimuat, pustaka **SQLAlchemy** menarik tabel dari kedua DBMS tersebut. 
-3. **Pandas** bertugas melakukan penggabungan data (`pd.merge`) menggunakan skema *Left Join* pada kunci `bps_kode_kecamatan`. Hasil dari *data pipeline* ini adalah sebuah *dataframe* tunggal yang komprehensif untuk dianalisis.
+1. **Ekstraksi & Inisialisasi:** Skrip *seed* `siapkan_data.py` mengekstrak data dari *dataset* mentah (Excel), mentransformasikannya, lalu memuatnya (*Load*) ke Supabase dan SQLite secara terpisah.
+2. **Koneksi:** Saat aplikasi web (`app.py`) dimuat, pustaka **SQLAlchemy** menarik tabel dari kedua DBMS tersebut.
+3. **Penggabungan:** Pustaka **Pandas** melakukan penggabungan data (`pd.merge`) menggunakan skema *Left Join* pada atribut `bps_kode_kecamatan`, menghasilkan *dataframe* tunggal untuk dianalisis.
 
-## Fitur Interaktivitas Visualisasi
+## 4. Fitur Interaktivitas Visualisasi
 Antarmuka dibangun menggunakan framework **Streamlit** dan pustaka **Plotly Express**, meliputi:
-* **Slicer / Filter Dinamis:** Pengguna dapat memfilter dataset secara spesifik berdasarkan Tahun, Status Gizi, Kecamatan, dan UPT Puskesmas.
-* **Tabel Rincian Responsif:** Menampilkan data tabular yang langsung menyesuaikan dengan parameter filter yang dipilih (kolom *keterangan* diurutkan di bagian paling kanan).
-* **Grafik Batang (Bar Chart):** Memvisualisasikan komparasi total balita berdasarkan kategori status gizi untuk melihat sebaran masalah gizi secara horizontal.
-* **Grafik Garis (Line Chart):** Menampilkan tren pergerakan jumlah balita yang diukur dari tahun ke tahun.
+* **Filter Dinamis (Slicer):** Sidebar interaktif dengan *dropdown* untuk menyaring data berdasarkan Tahun, Status Gizi, Kecamatan, dan UPT Puskesmas.
+* **Ringkasan Eksekutif (KPI):** Deretan kartu metrik dinamis di bagian atas dasbor yang menghitung Total Balita, Jumlah Puskesmas Terlibat, dan Rata-rata sesuai filter yang dipilih.
+* **Tabel Rincian Responsif:** Menampilkan data tabular hasil penyaringan (kolom *keterangan* diurutkan di bagian paling kanan).
+* **Grafik Interaktif:** 
+  * *Bar Chart*: Memvisualisasikan komparasi total balita berdasarkan kategori status gizi.
+  * *Line Chart*: Menampilkan tren pergerakan jumlah balita dari tahun ke tahun.
 
-## Sumber Data & Referensi
-* **Sumber Data Asli:** https://opendata.bandung.go.id/dataset/jumlah-balita-berdasarkan-status-gizi-dengan-indikator-tinggi-badan-menurut-umur-tbu-di-puskesmas-kota-bandung
-* **Live App (Streamlit):** https://visdat-va23sxseg9fcuuha8u4jxl.streamlit.app/
+## 5. Daftar Tautan & Referensi Utama
+* **URL Live Web Application:** https://visdat-va23sxseg9fcuuha8u4jxl.streamlit.app/
+* **URL Repositori GitHub:** https://github.com/girivino12/Visualisasi-data.git
+* **URL Sumber Data Asli:** [Open Data Kota Bandung - Jumlah Balita Berdasarkan Status Gizi](https://opendata.bandung.go.id/dataset/jumlah-balita-berdasarkan-status-gizi-dengan-indikator-tinggi-badan-menurut-umur-tbu-di-puskesmas-kota-bandung)
+* **URL Referensi Kode/Proyek:** [dataprofessor/dashboard-kit](https://github.com/dataprofessor/dashboard-kit) (Dijadikan rujukan untuk pembuatan metrik *Ringkasan Eksekutif* / KPI *Cards*).
 
-## Cara Menjalankan Proyek Secara Lokal
-1. Instalasi dependensi: `pip install -r requirements.txt`
-2. Eksekusi skrip inisialisasi basis data: `python siapkan_data.py`
-3. Jalankan server Streamlit: `streamlit run app.py`
+## 6. Cara Menjalankan Proyek Secara Lokal
+1. Instalasi dependensi: 
+   ```bash
+   pip install -r requirements.txt
+   python siapkan_data.py
+   streamlit run app.py
+   
