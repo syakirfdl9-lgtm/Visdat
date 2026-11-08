@@ -39,7 +39,6 @@ Antarmuka dibangun menggunakan framework **Streamlit** dan pustaka **Plotly Expr
 
 ## 5. Daftar Tautan & Referensi Utama
 * **URL Live Web Application:** https://visdat-va23sxseg9fcuuha8u4jxl.streamlit.app/
-* **URL Repositori GitHub:** https://github.com/girivino12/Visualisasi-data.git
 * **URL Sumber Data Asli:** [Open Data Kota Bandung - Jumlah Balita Berdasarkan Status Gizi](https://opendata.bandung.go.id/dataset/jumlah-balita-berdasarkan-status-gizi-dengan-indikator-tinggi-badan-menurut-umur-tbu-di-puskesmas-kota-bandung)
 * **URL Referensi Kode/Proyek:** [dataprofessor/dashboard-kit](https://github.com/dataprofessor/dashboard-kit) (Dijadikan rujukan untuk pembuatan metrik *Ringkasan Eksekutif* / KPI *Cards*).
 
@@ -49,4 +48,3 @@ Antarmuka dibangun menggunakan framework **Streamlit** dan pustaka **Plotly Expr
    pip install -r requirements.txt
    python siapkan_data.py
    streamlit run app.py
-   
